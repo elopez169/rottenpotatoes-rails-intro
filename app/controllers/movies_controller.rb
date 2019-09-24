@@ -14,8 +14,8 @@ class MoviesController < ApplicationController
     @movies = Movie.all
     @movies = @movies.order(params[:sort_by])
 
-    if params[:sort_by] == 'title' then @title_class = 'hilite' end
-    if params[:sort_by] == 'release_date' then @release_date_class = 'hilite' end
+    if params[:sort_by] == 'title' then @title_header = 'hilite' end
+    if params[:sort_by] == 'release_date' then @release_date_header = 'hilite' end
   end
 
   def order_titles
