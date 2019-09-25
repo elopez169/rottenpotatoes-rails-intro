@@ -11,17 +11,22 @@ class MoviesController < ApplicationController
   end
 
   def index
-    @movies = Movie.all
-    @movies = @movies.order(params[:sort_by])
+    @all_ratings = Movie.get_ratings.keys
+    @selected_ratings = params[:ratings] ? params[:ratings].keys : @all_ratings
+
+    @selected_ratings.each do |rating|
+      params[rating] = true
+    end
+
+    if params[:sort_by] 
+      @movies = Movie.order(params[:sort_by])
+    else
+      @movies = Movie.with_ratings(@selected_ratings) 
+    end
 
     if params[:sort_by] == 'title' then @title_header = 'hilite' end
     if params[:sort_by] == 'release_date' then @release_date_header = 'hilite' end
   end
-
-  def order_titles
-    @ordered_movies = Movie.order(:title)
-  end
-  helper_method :order_titles
 
   def new
     # default: render 'new' template
