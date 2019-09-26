@@ -10,6 +10,7 @@ class Movie < ActiveRecord::Base
 	end
 
 	def self.with_ratings(ratings)
+		puts "From Model ratings = ", ratings
 		self.where({rating: ratings})
 	end
 end

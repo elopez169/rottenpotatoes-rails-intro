@@ -11,17 +11,19 @@ class MoviesController < ApplicationController
   end
 
   def index
-    @all_ratings = Movie.get_ratings.keys
-    @selected_ratings = params[:ratings] ? params[:ratings].keys : @all_ratings
+    @all_ratings = Movie.get_ratings
+    @selected_ratings = params[:ratings] || session[:ratings] || @all_ratings
+    @sort_by = params[:sort_by] || session[:sort_by]
+    
+    session[:ratings] = @selected_ratings
+    session[:sort_by] = @sort_by
 
-    @selected_ratings.each do |rating|
-      params[rating] = true
-    end
+    @movies = Movie.with_ratings(@selected_ratings.keys)
+    @movies = @movies.order(@sort_by)
 
-    if params[:sort_by] 
-      @movies = Movie.order(params[:sort_by])
-    else
-      @movies = Movie.with_ratings(@selected_ratings) 
+    if params[:ratings] != session[:ratings] or params[:sort_by] != session[:sort_by]
+      flash.keep
+      redirect_to movies_path sort_by: @sort_by, ratings: @selected_ratings
     end
 
     if params[:sort_by] == 'title' then @title_header = 'hilite' end
